@@ -36,8 +36,8 @@ document.body.appendChild( renderer.domElement );
 
 
 // CAMERA //
-camera = createCam(40)
-camera.position.set(5, 5, 5)
+camera = createCam()
+camera.position.set(0, 5, 0)
 scene.add(camera)
 
 // CONTROLS //
@@ -75,14 +75,6 @@ const update = (time) => {
 
 
 {
-  const light = new THREE.HemisphereLight('#fff', "#030522", 3)
+  const light = new THREE.HemisphereLight('#fff', "#030522", 1)
   scene.add(light)
-}
-
-
-{
-  const geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );
-  const material = new THREE.MeshBasicMaterial( {color: '#f00'} );
-  const cube = new THREE.Mesh( geometry, material );
-  scene.add( cube );
 }
