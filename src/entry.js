@@ -2,4 +2,4 @@ import './style/root.sass';
 
 import 'regenerator-runtime/runtime'
 
-// import './js/.js';
+import './js/THREE.js';
