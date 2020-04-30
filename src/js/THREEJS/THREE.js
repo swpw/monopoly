@@ -78,3 +78,21 @@ const update = (time) => {
   const light = new THREE.HemisphereLight('#fff', "#030522", 1)
   scene.add(light)
 }
+
+
+let models
+
+loader = new GLTFLoader()
+
+loader.load('./assets/assets.glb', glb => {
+  models = glb.scene
+
+  afterLoad()
+},
+xhr => console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' ),
+err => console.error( 'An error happened', err ))
+
+
+const afterLoad = () => {
+
+}
