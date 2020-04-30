@@ -94,5 +94,69 @@ err => console.error( 'An error happened', err ))
 
 
 const afterLoad = () => {
+  const terrain = new Terrain( 11, 2, models.children[0] )
+}
 
+
+class Terrain {
+  constructor( map_size, side_buildings_size, terrain_mesh ) {
+    this.size = map_size
+    this.side_size = side_buildings_size
+    this.mesh = terrain_mesh
+
+    this.createGroups()
+
+    console.log(scene)
+  }
+
+  createGroups(){
+    const gameboard_group = new THREE.Group(),
+      mainTerrain_group = new THREE.Group(),
+      sideTerrain_group = new THREE.Group(),
+      houses_group = new THREE.Group(),
+      roads_group = new THREE.Group(),
+      buildings_group = new THREE.Group()
+
+    gameboard_group.uuid = 'gameboard_group'
+    mainTerrain_group.uuid = 'mainTerrain_group'
+    sideTerrain_group.uuid = 'sideTerrain_group'
+    houses_group.uuid = 'houses_group'
+    roads_group.uuid = 'roads_group'
+    buildings_group.uuid = 'buildings_group'
+
+    for( let i = 0; i < this.size; i++ ){
+      const tile = new THREE.Group()
+
+      tile.uuid = `tile-${ i + 1 }`
+
+      houses_group.add(tile.clone())
+      roads_group.add(tile.clone())
+      buildings_group.add(tile.clone())
+    }
+
+    for( let i = 0; i < this.side_size; i++ ){
+      const collumn = new THREE.Group()
+
+      collumn.uuid = `collumn-${ i + 1 }`
+
+      for( let j = 0; j < this.size; j++ ){
+        const tile = new THREE.Group()
+
+        tile.uuid = `tile-${ j + 1 }`
+
+        collumn.add(tile)
+      }
+
+      sideTerrain_group.add(collumn)
+    }
+
+    mainTerrain_group.add(houses_group)
+    mainTerrain_group.add(roads_group)
+    mainTerrain_group.add(buildings_group)
+
+    gameboard_group.add(mainTerrain_group)
+    gameboard_group.add(sideTerrain_group)
+
+    scene.add(gameboard_group)
+  }
 }
