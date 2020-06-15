@@ -97,20 +97,19 @@ const afterLoad = () => {
   const mesh = models.children[0]
   mesh.rotateY(90 * Math.PI / 180)
 
-  const terrain = new Terrain( 11, 2, mesh )
+  const terrain = new Terrain( 11, mesh )
 }
 
 
 class Terrain {
-  constructor( map_size, side_buildings_size, terrain_mesh ) {
+  constructor( map_size, terrain_mesh ) {
     this.size = map_size
-    this.side_size = side_buildings_size
     this.mesh = terrain_mesh
 
     this.createGroups()
     this.createTerrainTiles()
 
-    console.log(scene)
+    console.log('scene', scene)
   }
 
   createGroups(){
@@ -122,21 +121,17 @@ class Terrain {
         -houses_group -> X amount of tiles
         -roads_group -> X amount of tiles
         -buildings_group -> X amount of tiles
-      -sideTerrain_group:
-        - X amount of collumns -> X amount of tiles
 
     */
 
     const gameboard_group = new THREE.Group(),
       mainTerrain_group = new THREE.Group(),
-      sideTerrain_group = new THREE.Group(),
       houses_group = new THREE.Group(),
       roads_group = new THREE.Group(),
       buildings_group = new THREE.Group()
 
     gameboard_group.name = 'gameboard_group'
     mainTerrain_group.name = 'mainTerrain_group'
-    sideTerrain_group.name = 'sideTerrain_group'
     houses_group.name = 'houses_group'
     roads_group.name = 'roads_group'
     buildings_group.name = 'buildings_group'
@@ -155,28 +150,11 @@ class Terrain {
       buildings_group.add(tile3)
     }
 
-    for( let i = 0; i < this.side_size; i++ ){
-      const collumn = new THREE.Group()
-
-      collumn.name = `collumn-${ i + 1 }`
-
-      for( let j = 0; j < this.size; j++ ){
-        const tile = new THREE.Group()
-
-        tile.name = `tile-${ j + 1 }`
-
-        collumn.add(tile)
-      }
-
-      sideTerrain_group.add(collumn)
-    }
-
     mainTerrain_group.add(houses_group)
     mainTerrain_group.add(roads_group)
     mainTerrain_group.add(buildings_group)
 
     gameboard_group.add(mainTerrain_group)
-    gameboard_group.add(sideTerrain_group)
 
     scene.add(gameboard_group)
   }
