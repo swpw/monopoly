@@ -37,7 +37,7 @@ document.body.appendChild( renderer.domElement );
 
 // CAMERA //
 camera = createCam()
-camera.position.set(0, 5, 0)
+camera.position.set(-2, 4, 1.5)
 scene.add(camera)
 
 // CONTROLS //
@@ -94,7 +94,10 @@ err => console.error( 'An error happened', err ))
 
 
 const afterLoad = () => {
-  const terrain = new Terrain( 11, 2, models.children[0] )
+  const mesh = models.children[0]
+  mesh.rotateY(90 * Math.PI / 180)
+
+  const terrain = new Terrain( 11, 2, mesh )
 }
 
 
@@ -105,11 +108,25 @@ class Terrain {
     this.mesh = terrain_mesh
 
     this.createGroups()
+    this.createTerrainTiles()
 
     console.log(scene)
   }
 
   createGroups(){
+    // Inject scene with `gameboard` groups
+    /*
+
+    gameboard_group:
+      -mainTerrain_group:
+        -houses_group -> X amount of tiles
+        -roads_group -> X amount of tiles
+        -buildings_group -> X amount of tiles
+      -sideTerrain_group:
+        - X amount of collumns -> X amount of tiles
+
+    */
+
     const gameboard_group = new THREE.Group(),
       mainTerrain_group = new THREE.Group(),
       sideTerrain_group = new THREE.Group(),
@@ -117,32 +134,36 @@ class Terrain {
       roads_group = new THREE.Group(),
       buildings_group = new THREE.Group()
 
-    gameboard_group.uuid = 'gameboard_group'
-    mainTerrain_group.uuid = 'mainTerrain_group'
-    sideTerrain_group.uuid = 'sideTerrain_group'
-    houses_group.uuid = 'houses_group'
-    roads_group.uuid = 'roads_group'
-    buildings_group.uuid = 'buildings_group'
+    gameboard_group.name = 'gameboard_group'
+    mainTerrain_group.name = 'mainTerrain_group'
+    sideTerrain_group.name = 'sideTerrain_group'
+    houses_group.name = 'houses_group'
+    roads_group.name = 'roads_group'
+    buildings_group.name = 'buildings_group'
 
     for( let i = 0; i < this.size; i++ ){
-      const tile = new THREE.Group()
+      const tile1 = new THREE.Group()
+      const tile2 = new THREE.Group()
+      const tile3 = new THREE.Group()
 
-      tile.uuid = `tile-${ i + 1 }`
+      tile1.name = `tile-${ i + 1 }`
+      tile2.name = `tile-${ i + 1 }`
+      tile3.name = `tile-${ i + 1 }`
 
-      houses_group.add(tile.clone())
-      roads_group.add(tile.clone())
-      buildings_group.add(tile.clone())
+      houses_group.add(tile1)
+      roads_group.add(tile2)
+      buildings_group.add(tile3)
     }
 
     for( let i = 0; i < this.side_size; i++ ){
       const collumn = new THREE.Group()
 
-      collumn.uuid = `collumn-${ i + 1 }`
+      collumn.name = `collumn-${ i + 1 }`
 
       for( let j = 0; j < this.size; j++ ){
         const tile = new THREE.Group()
 
-        tile.uuid = `tile-${ j + 1 }`
+        tile.name = `tile-${ j + 1 }`
 
         collumn.add(tile)
       }
@@ -158,5 +179,45 @@ class Terrain {
     gameboard_group.add(sideTerrain_group)
 
     scene.add(gameboard_group)
+  }
+
+  createTerrainTiles(){
+    // Select specific groups
+
+    const gameboard = scene.children.find(e => e.name === 'gameboard_group')
+
+    const mainTerrain_children = gameboard.children[0].children.filter(e => e)
+
+    const houses_tiles = mainTerrain_children.filter(e => e.name === 'houses_group')[0].children
+    const roads_tiles = mainTerrain_children.filter(e => e.name === 'roads_group')[0].children
+    const buildings_tiles = mainTerrain_children.filter(e => e.name === 'buildings_group')[0].children
+
+    // Add meshes to specific groups
+
+    houses_tiles.map((e, i)=> {
+      const mesh = this.mesh.clone()
+      mesh.name = 'tile'
+      mesh.position.set(0, 0, i * -1.7)   // hard written position of tiles
+      e.add(mesh)
+    })
+
+    roads_tiles.map((e, i)=> {
+      const j = i + .5
+
+      const mesh = this.mesh.clone()
+      mesh.name = 'tile'
+      mesh.position.set(1.5, 0, j * -1.7)   // hard written position of tiles
+      e.add(mesh)
+    })
+
+    buildings_tiles.map((e, i)=> {
+      const j = i + 1
+
+      const mesh = this.mesh.clone()
+      mesh.name = 'tile'
+      mesh.position.set(3, 0, j * -1.7)   // hard written position of tiles
+      e.add(mesh)
+    })
+
   }
 }
