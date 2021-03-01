@@ -41,6 +41,6 @@
   "dependencies": {
     "@babel/preset-env": "^7.3.4",
     "browser-sync": "^2.26.7",
-    "three": "^0.115.0"
+    "three": "^0.125.0"
   }
 }
